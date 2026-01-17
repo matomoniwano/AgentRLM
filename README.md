@@ -50,7 +50,7 @@ This repository is a fork and adaptation of the original MIT CSAIL RLM codebase,
 
 ### Key Modifications
 
-![flow](https://github.com/matomoniwano/AgentRLM/blob/main/flow.png)
+![flow](https://github.com/matomoniwano/AgentRLM/blob/main/flow.jpg)
 
 - **Agent-oriented backend**  
   A new `rlm-backend/` directory has been added, containing a lightweight Python backend that exposes RLM as a conversational service (e.g. via HTTP). This backend wraps the core RLM logic and is designed for real-time interaction rather than offline benchmarking.
