@@ -1,17 +1,5 @@
-fastapi>=0.111.0
-uvicorn>=0.30.0
-
-# Core RLM dependencies
-rich>=13.0.0
-python-dotenv>=1.0.0
-requests>=2.32.0
-
-# Model providers
-google-genai>=1.56.0
-openai>=2.14.0
-anthropic>=0.75.0
-portkey-ai>=2.1.0
+fastapi
+uvicorn
 rlm
-
-# RLM itself (local install)
-.
+google-genai
+python-dotenv
