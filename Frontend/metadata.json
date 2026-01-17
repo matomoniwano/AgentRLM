@@ -1,0 +1,5 @@
+{
+  "name": "Recursive Language Model",
+  "description": "An experimental architecture for adaptive, policy-driven agents with persistent memory.",
+  "requestFramePermissions": []
+}
