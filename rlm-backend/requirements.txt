@@ -2,4 +2,4 @@ fastapi
 uvicorn
 google-genai
 python-dotenv
--e ../rlm
+git+https://github.com/matomoniwano/AgentRLM.git
