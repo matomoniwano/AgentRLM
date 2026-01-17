@@ -19,7 +19,7 @@ def get_rlm():
                 "model_name": "gemini-2.5-flash"
             },
             environment="local",
-            max_iterations=8,   # optional recursion
+            max_iterations=4,   # optional recursion
             max_depth=1,
             verbose=False,
         )
