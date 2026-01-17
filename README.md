@@ -1,160 +1,73 @@
+![banner](link here)
+# Agent RLM
+
+**Agent RLM** is the first Recursive Language Model (RLM)–based agent built on Solana.
+
+It is inspired by the *Recursive Language Models* paper by **Alex Zhang and the MIT CSAIL / OASYS team**, and is built on top of a fork of the official RLM repository:
+👉 https://github.com/alexzhang13/rlm
+
+This project adapts the core RLM inference ideas into a **lighter, agent-style conversational system**, designed for real-time interaction rather than research benchmarking.
 
 ---
 
-<h1 align="center" style="font-size:2.8em">
-<span>Recursive Language Models (<span style="color:orange">RLM</span>s)</span>
-</h1>
+## What is Agent RLM?
 
-<p align="center" style="font-size:1.3em">
-  <a href="https://arxiv.org/abs/2512.24601">Full Paper</a> •
-  <a href="https://alexzhang13.github.io/blog/2025/rlm/">Blogpost</a> •
-  <a href="https://alexzhang13.github.io/rlm/">Documentation</a> •
-  <a href="https://github.com/alexzhang13/rlm-minimal">RLM Minimal</a>
-</p>
+Agent RLM is not a standard chatbot.
 
-<p align="center">
-  <a href="https://github.com/alexzhang13/rlm/actions/workflows/style.yml">
-    <img src="https://github.com/alexzhang13/rlm/actions/workflows/style.yml/badge.svg" alt="Style" />
-  </a>
-  <a href="https://github.com/alexzhang13/rlm/actions/workflows/test.yml">
-    <img src="https://github.com/alexzhang13/rlm/actions/workflows/test.yml/badge.svg" alt="Test" />
-  </a>
-</p>
+It is designed around the RLM idea:
+- context treated as a mutable state
+- recursive internal refinement before responding
+- convergence over verbosity
 
-<p align="center">
-  <a href="https://arxiv.org/abs/2512.24601">
-    <img src="media/paper_preview.png" alt="Paper Preview" width="300"/>
-  </a>
-</p>
+From the outside, it behaves like a calm, capable AI agent.  
+Internally, it refines before it speaks.
 
-## Overview
-Recursive Language Models (RLMs) are a task-agnostic inference paradigm for language models (LMs) to handle near-infinite length contexts by enabling the LM to *programmatically* examine, decompose, and recursively call itself over its input. RLMs replace the canonical `llm.completion(prompt, model)` call with a `rlm.completion(prompt, model)` call. RLMs offload the context as a variable in a REPL environment that the LM can interact with and launch sub-LM calls inside of.
+---
 
-This repository provides an extensible inference engine for using RLMs around standard API-based and local LLMs. The initial experiments and idea were proposed in a [blogpost](https://alexzhang13.github.io/blog/2025/rlm/) in 2025, with expanded results in an [arXiv preprint](https://arxiv.org/abs/2512.24601).
+## About Recursive Language Models (RLMs)
 
-> [!NOTE]
-> This repository contains inference code for RLMs with support for various sandbox environments. Open-source contributions are welcome. This repository is maintained by the authors of the paper from the MIT OASYS lab.
+Recursive Language Models (RLMs) are an inference paradigm that allows language models to:
+- programmatically inspect large contexts
+- decompose inputs
+- recursively call themselves
+- avoid context degradation (“context rot”)
 
-<!-- ## Installation
-```
-pip install rlm
-```
-To install the latest from `main`:
-```
-pip install git+https://github.com/alexzhang13/rlm.git
-```
-``` -->
+The original research and open-source framework were introduced by **Alex Zhang et al. (MIT CSAIL)**.
 
-## Quick Setup
-Set up the dependencies with `uv` (or your virtual environment of choice):
-```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
-uv init && uv venv --python 3.12  # change version as needed
-uv pip install -e .
-```
+📄 Paper: https://arxiv.org/abs/2512.24601  
+📝 Blog: https://alexzhang13.github.io/blog/2025/rlm/  
+🧠 Original Repo: https://github.com/alexzhang13/rlm  
 
-This project includes a `Makefile` to simplify common tasks.
+---
 
-- `make install`: Install base dependencies.
-- `make check`: Run linter, formatter, and tests.
+## This Repository
 
-To run a quick test, the following will run an RLM query with the OpenAI client using your environment variable `OPENAI_API_KEY` (feel free to change this). This will generate console output as well as a log which you can use with the visualizer to explore the trajectories.
-```bash
-make quickstart
-```
+This repo contains:
+- a forked and adapted version of the original RLM framework
+- a lightweight conversational agent implementation
+- adjustments focused on real-time chat and deployment
 
-The default RLM client uses a REPL environment that runs on the host process through Python `exec` calls. It uses the same virtual environment as the host process (i.e. it will have access to the same dependencies), but with some limitations in its available global modules. As an example, we can call RLM completions using GPT-5-nano:
-```python
-from rlm import RLM
+It is **not** a drop-in replacement for the research codebase.  
+It is an **agent-oriented adaptation**.
 
-rlm = RLM(
-    backend="openai",
-    backend_kwargs={"model_name": "gpt-5-nano"},
-    verbose=True,  # For printing to console with rich, disabled by default.
-)
+---
 
-print(rlm.completion("Print me the first 100 powers of two, each on a newline.").response)
-```
+## Links
 
-## REPL Environments
-We support two types of REPL environments -- isolated, and non-isolated. Non-isolated environments (default) run code execution on the same machine as the RLM (e.g. through `exec`), which is pretty reasonable for some local low-risk tasks, like simple benchmarking, but can be problematic if the prompts or tool calls can interact with malicious users. Fully isolated environments used Cloud-based sandboxes (e.g. Prime Sandboxes, [Modal Sandboxes](https://modal.com/docs/guide/sandboxes)) to run code generated by the RLM, ensuring completely isolation from the host process. Environments can be added, but we natively support the following: `local` (default), `modal`, `prime`.
+- 🌐 Website: https://rlm.codes  
+- 🐦 Twitter / X: https://x.com/AgentRLM  
 
-```python
-rlm = RLM(
-    environment="...", # "local", "docker", "modal", "prime"
-    environment_kwargs={...},
-)
-```
+---
 
-### Local Environments
-The default `local` environment `LocalREPL` runs in the same process as the RLM itself, with specified global and local namespaces for minimal security. Using this REPL is generally safe, but should not be used for production settings. It also shares the same virtual environment (e.g. Conda or uv) as the host process.
+## Credits
 
-#### Docker <img src="https://github.com/docker.png" alt="Docker" height="20" style="vertical-align: middle;"/> (*requires [Docker installed](https://docs.docker.com/desktop/setup/install/)*)
-We also support a Docker-based environment called `DockerREPL` that launches the REPL environment as a Docker image. By default, we use the `python:3.11-slim` image, but the user can specify custom images as well.
+Recursive Language Models were introduced by:
 
-### Isolated Environments
-We support several different REPL environments that run on separate, cloud-based machines. Whenever a recursive sub-call is made in these instances, it is requested from the host process.
+**Alex L. Zhang**, **Tim Kraska**, **Omar Khattab**  
+MIT CSAIL / OASYS Lab
 
-#### Modal Sandboxes <img src="https://github.com/modal-labs.png" alt="Modal" height="20" style="vertical-align: middle;"/>
-To use [Modal Sandboxes](https://modal.com/docs/guide/sandboxes) as the REPL environment, you need to install and authenticate your Modal account.
-```bash
-uv add modal  # add modal library
-modal setup   # authenticate account
-```
+If you are interested in the full research implementation, benchmarks, or sandboxed REPL environments, please refer to the original repository and paper.
 
-#### Prime Intellect Sandboxes <img src="https://github.com/PrimeIntellect-ai.png" alt="Prime Intellect" height="20" style="vertical-align: middle;"/>
-> [!NOTE]
-> **Prime Intellect Sandboxes** are currently a beta feature. See the [documentation](https://docs.primeintellect.ai/sandboxes/overview) for more information. We noticed slow runtimes when using these sandboxes, which is currently an open issue.
+---
 
-
-To use [Prime Sandboxes](https://docs.primeintellect.ai/sandboxes/sdk), install the SDK and set your API key:
-```bash
-uv pip install -e ".[prime]"
-export PRIME_API_KEY=...
-```
-
-
-### Model Providers
-We currently support most major clients (OpenAI, Anthropic), as well as the router platforms (OpenRouter, Portkey, LiteLLM). For local models, we recommend using vLLM (which interfaces with the [OpenAI client](https://github.com/alexzhang13/rlm/blob/main/rlm/clients/openai.py)). To view or add support for more clients, start by looking at [`rlm/clients/`](https://github.com/alexzhang13/rlm/tree/main/rlm/clients).
-
-## Relevant Reading
-* **[Dec '25]** [Recursive Language Models arXiv](https://arxiv.org/abs/2512.24601)
-* **[Oct '25]** [Recursive Language Models Blogpost](https://alexzhang13.github.io/blog/2025/rlm/)
-
-If you use this code or repository in your research, please cite:
-
-```bibtex
-@misc{zhang2025recursivelanguagemodels,
-      title={Recursive Language Models}, 
-      author={Alex L. Zhang and Tim Kraska and Omar Khattab},
-      year={2025},
-      eprint={2512.24601},
-      archivePrefix={arXiv},
-      primaryClass={cs.AI},
-      url={https://arxiv.org/abs/2512.24601}, 
-}
-```
-
-## Optional Debugging: Visualizing RLM Trajectories
-We additionally provide a simple visualizer tool to examine and view the code, sub-LM, and root-LM calls of an RLM trajectory. To save log files (`.jsonl`) on every completion call that can be viewed in the visualizer, initialize the `RLMLogger` object and pass it into the `RLM` on initialization:
-```python
-from rlm.logger import RLMLogger
-from rlm import RLM
-
-logger = RLMLogger(log_dir="./logs")
-rlm = RLM(
-    ...
-    logger=logger
-)
-```
-
-To run the visualizer locally, we use Node.js and shadcn/ui:
-```
-cd visualizer/
-npm run dev        # default localhost:3001
-```
-
-You'll have the option to select saved `.jsonl` files 
-<p align="center">
-  <img src="media/visualizer.png" alt="RLM Visualizer Example" width="800"/>
-</p>
+Agent RLM is an experiment in bringing recursive inference out of papers and into agents.
