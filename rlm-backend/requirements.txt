@@ -1,5 +1,5 @@
 fastapi
 uvicorn
-rlm
 google-genai
 python-dotenv
+-e ..
