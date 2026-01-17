@@ -1,53 +1,17 @@
-import os
 from rlm import RLM
+from prompt_builder import load_character_prompt
 
-# -------------------------------------------------
-# SYSTEM PROMPT — RLM + friendly general intelligence
-# -------------------------------------------------
-
-SYSTEM_PROMPT = """
-You are Agent RLM.
-
-You are a general-purpose intelligent assistant.
-You help users think clearly, understand ideas, and explore questions.
-
-IMPORTANT BEHAVIOR:
-
-- Do NOT refuse speculative or future-oriented questions.
-- Do NOT give fake certainty or hard predictions.
-- Do NOT use safety disclaimers or capability disclaimers.
-
-Instead:
-- Reframe questions into what can be reasonably discussed.
-- Explain how people usually think about the topic.
-- Offer frameworks, perspectives, and useful context.
-- Ask a short follow-up question if clarification would help.
-
-Tone:
-- calm
-- intelligent
-- friendly
-- slightly witty (never sarcastic)
-- confident but not authoritative
-
-Style:
-- Clear, simple language
-- No policy or system talk
-- No “as an AI” phrasing
-- Treat the conversation as continuous context
-
-Your goal is not just to answer —
-it is to help the user understand.
-"""
-
-# -------------------------------------------------
-# RLM initialization (singleton)
-# -------------------------------------------------
-
+# Singleton
 _rlm = None
+_SYSTEM_PROMPT = None
+
 
 def get_rlm():
-    global _rlm
+    global _rlm, _SYSTEM_PROMPT
+
+    if _SYSTEM_PROMPT is None:
+        _SYSTEM_PROMPT = load_character_prompt()
+
     if _rlm is None:
         _rlm = RLM(
             backend="gemini",
@@ -55,49 +19,24 @@ def get_rlm():
                 "model_name": "gemini-2.5-flash"
             },
             environment="local",
-            max_iterations=8,   # recursion allowed, not forced
+            max_iterations=8,   # optional recursion
             max_depth=1,
-            verbose=False,      # keep clean for chat UX
+            verbose=False,
         )
-    return _rlm
 
-# -------------------------------------------------
-# Chat handler
-# -------------------------------------------------
+    return _rlm, _SYSTEM_PROMPT
+
 
 def chat_with_rlm(history: list[dict], message: str) -> str:
-    rlm = get_rlm()
+    rlm, system_prompt = get_rlm()
 
-    # Build full conversation context
-    messages = []
-
-    # Ensure system prompt is first
-    if not history or history[0]["role"] != "system":
-        messages.append({
-            "role": "system",
-            "content": SYSTEM_PROMPT
-        })
-
+    messages = [{"role": "system", "content": system_prompt}]
     messages.extend(history)
+    messages.append({"role": "user", "content": message})
 
-    messages.append({
-        "role": "user",
-        "content": message
-    })
+    result = rlm.completion(messages)
 
-    try:
-        result = rlm.completion(messages)
+    if hasattr(result, "response"):
+        return result.response.strip()
 
-        # RLM may return an object or string
-        if hasattr(result, "response"):
-            text = result.response.strip()
-        else:
-            text = str(result).strip()
-
-        if not text:
-            return "I paused for a moment there — try rephrasing?"
-
-        return text
-
-    except Exception as e:
-        return "Something interrupted my train of thought. Want to try again?"
+    return str(result).strip()
