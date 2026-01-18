@@ -6,6 +6,10 @@
   Recursive Language Model agent inspired by MIT CSAIL research
 </p>
 
+<p align="center" style="font-size:1.3em">
+  CA: 3ynxgnXhmbZR7kinwU3NEryExkXEmRXhoNL4qV9sBAGS
+</p>
+
 <p align="center" style="font-size:1.2em">
   <a href="https://rlm.codes">Website</a> •
   <a href="https://x.com/AgentRLM">X / Twitter</a> •
