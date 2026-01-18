@@ -1,9 +1,22 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Literal
 from rlm_service import chat_with_rlm
 
 app = FastAPI(title="Agent RLM Backend")
+
+# ----------------------------
+# CORS (REQUIRED for browser)
+# ----------------------------
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # ----------------------------
 # Request / Response models
