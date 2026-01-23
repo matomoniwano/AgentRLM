@@ -140,6 +140,38 @@ curl -X POST http://localhost:8000/chat \
   -H "Content-Type: application/json" \
   -d '{"history": [], "message": "Explain recursion in simple terms"}'
 ```
+## Features
+
+### Paper Decomposer & Notebook Builder
+
+**NEW**: AgentRLM now includes a feature that converts academic research papers into executable Jupyter notebooks!
+
+The Paper Decomposer:
+- 📄 Extracts structure and experiments from PDF papers or arXiv URLs
+- 🤖 Uses RLM to generate runnable notebook cells
+- 🐳 Executes notebooks safely in DockerREPL
+- 🔄 Iteratively fixes errors until notebooks run successfully
+- 📊 Creates visualizations and reproduces key results
+
+**Quick Start:**
+```bash
+# Install with paper decomposer support
+pip install -e ".[paper_decomposer]"
+
+# Convert a paper to notebook
+python -m paper_decomposer.controller paper.pdf --experiment 0 --toy
+
+# Or from arXiv
+python -m paper_decomposer.controller https://arxiv.org/abs/2301.12345
+```
+
+**Documentation:**
+- Full Guide: [paper_decomposer/docs/README.md](paper_decomposer/docs/README.md)
+- Quick Start: [paper_decomposer/QUICKSTART.md](paper_decomposer/QUICKSTART.md)
+- Feature Overview: [paper_decomposer/FEATURE_OVERVIEW.md](paper_decomposer/FEATURE_OVERVIEW.md)
+
+---
+
 ## Notes
 
 This project is experimental and evolving.

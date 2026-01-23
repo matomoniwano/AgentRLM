@@ -1,0 +1,42 @@
+Given this Jupyter notebook that failed to execute and the error trace below, propose minimal corrections to fix the failing cell(s).
+
+**Failing Cell Code:**
+```python
+{failing_cell_code}
+```
+
+**Error Trace:**
+```
+{error_trace}
+```
+
+**Surrounding Context:**
+Previous cells:
+{previous_cells}
+
+Following cells (if any):
+{following_cells}
+
+**Your Task:**
+Analyze the error and provide corrected cells. Return ONLY valid JSON in this format:
+
+{{
+  "analysis": "Brief explanation of what went wrong",
+  "cells": [
+    {{
+      "cell_type": "code",
+      "source": "# Corrected code here",
+      "cell_index": 3
+    }}
+  ]
+}}
+
+Guidelines:
+- Only include cells that need to be changed (specify their cell_index)
+- Provide the complete corrected source for each cell
+- Common fixes: missing imports, incorrect variable names, API changes, syntax errors
+- If a package is missing, add it to an earlier install cell
+- Keep changes minimal - only fix what's broken
+- Maintain the same functionality and intent
+
+Remember: Output ONLY the JSON object, nothing else.
